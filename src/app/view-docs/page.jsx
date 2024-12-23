@@ -23,7 +23,6 @@ export default function View() {
         if (hasFetched.current) return;
         hasFetched.current = true;
         const {result} = await fetchDocuments(userStore.id);
-        console.log(result)
         setDocuments(Array.isArray(result) ? result : []);
     };
 

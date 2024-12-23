@@ -56,17 +56,31 @@ const FileInput = ({
         setIsLoader(true);
 
         try {
+            // Step 1: Get signed URL from S3
             const signedURLResult = await uploadFileToS3();
-            const{url} = signedURLResult.success; 
+            
+            // Make sure the signed URL was returned successfully
+            if (!signedURLResult?.success) {
+                throw new Error('Failed to get signed URL from S3');
+            }
 
-            await fetch(url, {
+            const { url } = signedURLResult.success;
+
+            // Step 2: Upload the file to S3
+            const uploadResponse = await fetch(url, {
                 method: "PUT",
                 headers: { "Content-Type": selectedFile.type },
                 body: selectedFile,
             });
 
+            if (!uploadResponse.ok) {
+                throw new Error('File upload failed');
+            }
+
+            // Step 3: Encrypt the file name
             const file_name = encryptFileName(selectedFile.name);
 
+            // Step 4: Prepare the request payload
             const request = {
                 file_name: file_name,
                 file_type: selectedFile.type,
@@ -74,14 +88,21 @@ const FileInput = ({
                 user_id: userStore.id,
             };
 
+            // Step 5: Add document to your database
             const result = await addDocument(request);
 
             if (result.status) {
-                handleFileClear(); 
-                router.push("/view-docs")
+                handleFileClear();
+                router.push("/view-docs");
+            } else {
+                throw new Error('Failed to add document');
             }
         } catch (error) {
-            console.error("Error in file upload:", error);
+            // Improved error logging
+            console.error("Error in file upload:", error.message || error);
+            if (error.stack) {
+                console.error("Stack trace:", error.stack);
+            }
         } finally {
             setIsLoader(false);
         }
