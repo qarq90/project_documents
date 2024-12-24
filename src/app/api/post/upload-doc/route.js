@@ -4,15 +4,16 @@ import { Documents } from "@/models/Document";
 
 export const POST = async (request) => {
     try {
-        const { file_name, file_link, file_type, user_id } = await request.json();
+        const { file_name, file_link, file_type,created_at, user_id } = await request.json();
 
         await connect();
 
         const result = await Documents.create({
-            file_name,
-            file_type,
-            file_link,
-            user_id,
+            file_name:file_name,
+            file_type:file_type,
+            file_link:file_link,
+            user_id:user_id,
+            created_at:created_at
         });
 
         if (result) {

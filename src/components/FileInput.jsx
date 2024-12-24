@@ -86,6 +86,7 @@ const FileInput = ({
                 file_type: selectedFile.type,
                 file_link: url.split("?")[0], 
                 user_id: userStore.id,
+                created_at: Date.now(),
             };
 
             // Step 5: Add document to your database
