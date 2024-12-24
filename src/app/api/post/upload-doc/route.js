@@ -1,5 +1,5 @@
-import { connection } from "next/server";
-import connect from "@/lib/connection";
+import { NextResponse } from "next/server";
+import connection from "@/lib/connection";
 import { Documents } from "@/models/Document";
 
 export const POST = async (request) => {
