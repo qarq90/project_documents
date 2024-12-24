@@ -84,6 +84,10 @@ const FileInput = ({
                 created_at: Date.now(),
             };
 
+
+    console.log(request)
+
+
              const response = await fetch("/api/post/upload-doc", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
