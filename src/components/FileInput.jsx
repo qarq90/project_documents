@@ -6,6 +6,7 @@ import { uploadFileToS3, encryptFileName } from "@/helpers/addHelpers";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUIStore } from "@/stores/UIStore";
 import { useRouter } from "next/navigation";
+import {simpleCrypto} from "@/lib/secreting"
 
 const FileInput = ({
     id = "file-input",
@@ -71,24 +72,24 @@ const FileInput = ({
             const { url } = signedURLResult.success;
 
             // Step 2: Upload File
-            // const uploadResponse = await fetch(url, {
-            //     method: "PUT",
-            //     headers: { "Content-Type": selectedFile.type },
-            //     body: selectedFile,
-            // });
+            const uploadResponse = await fetch(url, {
+                method: "PUT",
+                headers: { "Content-Type": selectedFile.type },
+                body: selectedFile,
+            });
 
-            // console.log("File uploaded to S3:", uploadResponse.ok);
+            console.log("File uploaded to S3:", uploadResponse.ok);
 
-            // if (!uploadResponse.ok) {
-            //     throw new Error("File upload failed");
-            // }
+            if (!uploadResponse.ok) {
+                throw new Error("File upload failed");
+            }
 
             // Step 3: Prepare Request
-            const fileName = String(selectedFile?.name || "defaultFileName");  // Ensure this is a valid string
+            const fileName = String(selectedFile.name || "defaultFileName");  // Ensure this is a valid string
             if (!fileName) {
                 throw new Error("File name is undefined or empty");
             }
-            const encryptedFileName = encryptFileName(fileName);
+            const encryptedFileName = simpleCrypto.encrypt(fileName);
             console.log("Encrypted file name:", encryptedFileName);
 
             const request = {
@@ -102,21 +103,21 @@ const FileInput = ({
             console.log("Request prepared for API:", request);
 
             // Step 4: Save File Metadata
-            // const response = await fetch("/api/post/upload-doc", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify(request), // Send `request` directly
-            // });
+            const response = await fetch("/api/post/upload-doc", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(request), // Send `request` directly
+            });
 
-            // const result = await response.json();
-            // console.log("API response:", result);
+            const result = await response.json();
+            console.log("API response:", result);
 
-            // if (result.status) {
-            //     console.log("File metadata saved successfully, navigating to /view-docs");
-            //     router.push("/view-docs");
-            // } else {
-            //     throw new Error("Failed to add document");
-            // }
+            if (result.status) {
+                console.log("File metadata saved successfully, navigating to /view-docs");
+                router.push("/view-docs");
+            } else {
+                throw new Error("Failed to add document");
+            }
         } catch (error) {
             console.error("Error in file upload:", error);
         } finally {

@@ -1,7 +1,7 @@
 import { FaTrashCan } from "react-icons/fa6";
-import { decryptFileName } from "@/helpers/fetchHelpers";
 import { deleteDoc } from "@/helpers/deleteHelpers";
 import { useUIStore } from "@/stores/UIStore";
+import {simpleCrypto} from "@/lib/secreting"
 
 export const Card = ({
   index,
@@ -15,7 +15,6 @@ export const Card = ({
 }) => {
   const { setIsLoader } = useUIStore();
 
-  const decryptedFileName = decryptFileName(file_name);
 
   const deleteHandler = async (event) => {
     setIsLoader(true);
@@ -45,7 +44,7 @@ export const Card = ({
       >
         <div className="flex-1">
           <strong>Name:</strong>
-          <br /> {decryptedFileName}
+          <br />{simpleCrypto.decrypt(file_name)}
         </div>
         <div className="flex-1">
           <strong>Type:</strong> {file_type}

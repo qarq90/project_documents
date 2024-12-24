@@ -1,7 +1,7 @@
 import { FaTrashCan } from "react-icons/fa6";
-import { decryptFileName } from "@/helpers/fetchHelpers";
 import { deleteDoc } from "@/helpers/deleteHelpers";
 import { useUIStore } from "@/stores/UIStore";
+import {simpleCrypto} from "@/lib/secreting"
 
 export const Row = ({
     index,
@@ -14,8 +14,6 @@ export const Row = ({
     setDocuments,
 }) => {
     const { setIsLoader } = useUIStore();
-
-    const decryptedFileName = decryptFileName(file_name);
 
     const deleteHandler = async (event) => {
         setIsLoader(true);
@@ -41,7 +39,7 @@ export const Row = ({
             className="flex flex-row items-center gap-4 rounded-md bg-[var(--secondary-black)] px-6 py-2 text-left hover:brightness-125"
         >
             <div className="w-24">{index + 1}</div>
-            <div className="w-96">{decryptedFileName}</div>
+            <div className="w-96">{simpleCrypto.encrypt(file_name)}</div>
             <div className="w-72">{file_type}</div>
             <div className="w-64">
                 {new Date(created_at).toLocaleDateString("en-US")}
