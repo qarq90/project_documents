@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import connect from "@/lib/connection";
+import connection from "@/lib/connection";
 import {Documents} from "@/models/Document";
 
 export const POST = async (request) => {
     try {
         const { _id } = await request.json();
 
-        await connect();
+        await connection();
 
         const result = await Documents.deleteOne({
             _id: _id,

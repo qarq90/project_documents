@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { connection } from "next/server";
 import connect from "@/lib/connection";
 import { Documents } from "@/models/Document";
 
@@ -6,7 +6,7 @@ export const POST = async (request) => {
     try {
         const { file_name, file_link, file_type,created_at, user_id } = await request.json();
 
-        await connect();
+        await connection();
 
         const result = await Documents.create({
             file_name:file_name,
