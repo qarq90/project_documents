@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import Button from "./ui/Button";
 import { FaTrashCan } from "react-icons/fa6";
 import { PiUploadFill } from "react-icons/pi";
@@ -6,7 +6,7 @@ import { uploadFileToS3 } from "@/helpers/addHelpers";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUIStore } from "@/stores/UIStore";
 import { useRouter } from "next/navigation";
-import {simpleCrypto} from "@/lib/secreting"
+import {encryptFileName} from "@/lib/crypto"
 
 const FileInput = ({
     id = "file-input",
@@ -48,21 +48,17 @@ const FileInput = ({
         setSelectedFile(null);
         setFileUrl(null);
         if (inputRef.current) inputRef.current.value = "";
-        console.log("File cleared");
     };
 
     const handleFileUpload = async () => {
         if (!selectedFile) {
-            console.log("No file selected for upload");
             return alert("No file selected!");
         }
 
         setIsLoader(true);
-        console.log("Loader set to true");
 
         try {
             const signedURLResult = await uploadFileToS3();
-            console.log("Signed URL result:", signedURLResult);
 
             if (!signedURLResult?.success) {
                 throw new Error("Failed to get signed URL from S3");
@@ -76,7 +72,6 @@ const FileInput = ({
                 body: selectedFile,
             });
 
-            console.log("File uploaded to S3:", uploadResponse.ok);
 
             if (!uploadResponse.ok) {
                 throw new Error("File upload failed");
@@ -86,8 +81,7 @@ const FileInput = ({
             if (!fileName) {
                 throw new Error("File name is undefined or empty");
             }
-            const encryptedFileName = simpleCrypto.encrypt(fileName);
-            console.log("Encrypted file name:", encryptedFileName);
+            const encryptedFileName = encryptFileName(selectedFile.name,process.env.NEXT_PUBLIC_ENCRYPTION_KEY);
 
             const request = {
                 file_name: encryptedFileName,
@@ -97,7 +91,6 @@ const FileInput = ({
                 created_at: Date.now(),
             };
 
-            console.log("Request prepared for API:", request);
 
             const response = await fetch("/api/post/upload-doc", {
                 method: "POST",
@@ -106,10 +99,8 @@ const FileInput = ({
             });
 
             const result = await response.json();
-            console.log("API response:", result);
 
             if (result.status) {
-                console.log("File metadata saved successfully, navigating to /view-docs");
                 router.push("/view-docs");
             } else {
                 throw new Error("Failed to add document");
