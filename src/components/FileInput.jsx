@@ -84,11 +84,15 @@ const FileInput = ({
             // }
 
             // Step 3: Prepare Request
-            const file_name = encryptFileName(selectedFile.name);
-            console.log("Encrypted file name:", file_name);
+            const fileName = String(selectedFile?.name || "defaultFileName");  // Ensure this is a valid string
+            if (!fileName) {
+                throw new Error("File name is undefined or empty");
+            }
+            const encryptedFileName = encryptFileName(fileName);
+            console.log("Encrypted file name:", encryptedFileName);
 
             const request = {
-                file_name: file_name,
+                file_name: encryptedFileName,
                 file_type: selectedFile.type,
                 file_link: url.split("?")[0], // Get the public link without query params
                 user_id: userStore?.id, // Ensure userStore and id are valid
