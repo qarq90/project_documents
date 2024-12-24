@@ -6,8 +6,6 @@ const generateFileName = (bytes = 32) => {
     return crypto.randomBytes(bytes).toString("hex");
 };
 
-import crypto from "crypto";
-
 export const encryptFileName = (fileName) => {
     // Ensure the encryption key is exactly 32 bytes (256 bits)
     const key = Buffer.from(process.env.NEXT_PUBLIC_ENCRYPTION_KEY, "hex");
