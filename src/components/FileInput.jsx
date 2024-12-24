@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Button from "./ui/Button";
 import { FaTrashCan } from "react-icons/fa6";
 import { PiUploadFill } from "react-icons/pi";
-import { uploadFileToS3, encryptFileName } from "@/helpers/addHelpers";
+import { uploadFileToS3 } from "@/helpers/addHelpers";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUIStore } from "@/stores/UIStore";
 import { useRouter } from "next/navigation";
@@ -61,7 +61,6 @@ const FileInput = ({
         console.log("Loader set to true");
 
         try {
-            // Step 1: Get Signed URL
             const signedURLResult = await uploadFileToS3();
             console.log("Signed URL result:", signedURLResult);
 
@@ -71,7 +70,6 @@ const FileInput = ({
 
             const { url } = signedURLResult.success;
 
-            // Step 2: Upload File
             const uploadResponse = await fetch(url, {
                 method: "PUT",
                 headers: { "Content-Type": selectedFile.type },
@@ -84,8 +82,7 @@ const FileInput = ({
                 throw new Error("File upload failed");
             }
 
-            // Step 3: Prepare Request
-            const fileName = String(selectedFile.name || "defaultFileName");  // Ensure this is a valid string
+            const fileName = String(selectedFile.name || "defaultFileName");  
             if (!fileName) {
                 throw new Error("File name is undefined or empty");
             }
@@ -95,18 +92,17 @@ const FileInput = ({
             const request = {
                 file_name: encryptedFileName,
                 file_type: selectedFile.type,
-                file_link: url.split("?")[0], // Get the public link without query params
-                user_id: userStore?.id, // Ensure userStore and id are valid
+                file_link: url.split("?")[0],
+                user_id: userStore?.id,
                 created_at: Date.now(),
             };
 
             console.log("Request prepared for API:", request);
 
-            // Step 4: Save File Metadata
             const response = await fetch("/api/post/upload-doc", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(request), // Send `request` directly
+                body: JSON.stringify(request), 
             });
 
             const result = await response.json();

@@ -39,7 +39,7 @@ export const Row = ({
             className="flex flex-row items-center gap-4 rounded-md bg-[var(--secondary-black)] px-6 py-2 text-left hover:brightness-125"
         >
             <div className="w-24">{index + 1}</div>
-            <div className="w-96">{simpleCrypto.encrypt(file_name)}</div>
+            <div className="w-96">{simpleCrypto.decrypt(file_name)}</div>
             <div className="w-72">{file_type}</div>
             <div className="w-64">
                 {new Date(created_at).toLocaleDateString("en-US")}
