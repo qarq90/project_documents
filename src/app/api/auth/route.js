@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import connect from "@/lib/connection";
+import connection from "@/lib/connection";
 import Users from "@/models/User";
 
 export const POST = async (request) => {
     try {
         const { email } = await request.json();
 
-        await connect();
+        await connection();
 
         const result = await Users.findOne({
             email: email,
