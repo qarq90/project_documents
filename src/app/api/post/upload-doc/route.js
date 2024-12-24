@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connection from "@/lib/connection";
-import { Documents } from "@/models/Document";
+import  Documents from "@/models/Document";
 
 export const POST = async (request) => {
     try {

@@ -1,6 +1,8 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const DocumentSchema = new mongoose.Schema({
+const {Schema} = mongoose
+
+const DocumentSchema = new Schema({
     file_name: { type: String, required: true },
     file_type: { type: String, required: true },
     file_link: { type: String, required: true },
@@ -8,7 +10,12 @@ const DocumentSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
 });
 
-const Documents =
-    mongoose.models.Documents || mongoose.model("Documents", DocumentSchema);
+let Documents;
 
-module.exports = { Documents };
+try {
+    Documents = mongoose.model("Documents");
+} catch {
+    Documents = mongoose.model("Documents", DocumentSchema);
+}
+
+export default Documents
