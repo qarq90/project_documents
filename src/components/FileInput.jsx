@@ -2,11 +2,7 @@ import React, { useState, useRef } from "react";
 import Button from "./ui/Button";
 import { FaTrashCan } from "react-icons/fa6";
 import { PiUploadFill } from "react-icons/pi";
-import {
-    uploadFileToS3,
-    encryptFileName,
-    addDocument,
-} from "@/helpers/addHelpers";
+import { uploadFileToS3, encryptFileName } from "@/helpers/addHelpers";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUIStore } from "@/stores/UIStore";
 import { useRouter } from "next/navigation";
@@ -17,7 +13,7 @@ const FileInput = ({
     accept,
     disabled = false,
 }) => {
-    const router = useRouter()
+    const router = useRouter();
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileUrl, setFileUrl] = useState(null);
@@ -30,17 +26,20 @@ const FileInput = ({
         try {
             const file = e.target.files?.[0] || null;
             setSelectedFile(file);
+            console.log("File selected:", file);
 
             if (fileUrl) {
                 URL.revokeObjectURL(fileUrl);
+                console.log("Previous file URL revoked");
             }
 
             if (file) {
                 const url = URL.createObjectURL(file);
                 setFileUrl(url);
+                console.log("Generated file preview URL:", url);
             }
         } catch (error) {
-            console.error("Error in handleFileChange:", error, e);
+            console.error("Error in handleFileChange:", error);
         }
     };
 
@@ -48,72 +47,84 @@ const FileInput = ({
         setSelectedFile(null);
         setFileUrl(null);
         if (inputRef.current) inputRef.current.value = "";
+        console.log("File cleared");
     };
 
     const handleFileUpload = async () => {
-        if (!selectedFile) return;
+        if (!selectedFile) {
+            console.log("No file selected for upload");
+            return alert("No file selected!");
+        }
 
         setIsLoader(true);
+        console.log("Loader set to true");
 
         try {
+            // Step 1: Get Signed URL
             const signedURLResult = await uploadFileToS3();
-            
+            console.log("Signed URL result:", signedURLResult);
+
             if (!signedURLResult?.success) {
-                throw new Error('Failed to get signed URL from S3');
+                throw new Error("Failed to get signed URL from S3");
             }
 
             const { url } = signedURLResult.success;
 
+            // Step 2: Upload File
             const uploadResponse = await fetch(url, {
                 method: "PUT",
                 headers: { "Content-Type": selectedFile.type },
                 body: selectedFile,
             });
 
+            console.log("File uploaded to S3:", uploadResponse.ok);
+
             if (!uploadResponse.ok) {
-                throw new Error('File upload failed');
+                throw new Error("File upload failed");
             }
 
+            // Step 3: Prepare Request
             const file_name = encryptFileName(selectedFile.name);
+            console.log("Encrypted file name:", file_name);
 
             const request = {
-                file_name: file_name,
+                file_name,
                 file_type: selectedFile.type,
-                file_link: url.split("?")[0], 
-                user_id: userStore.id,
+                file_link: url.split("?")[0], // Get the public link without query params
+                user_id: userStore?.id, // Ensure userStore and id are valid
                 created_at: Date.now(),
             };
 
+            console.log("Request prepared for API:", request);
 
-    console.log(request)
-
-
-             const response = await fetch("/api/post/upload-doc", {
+            // Step 4: Save File Metadata
+            const response = await fetch("/api/post/upload-doc", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(request),  
+                body: JSON.stringify(request), // Send `request` directly
             });
 
-            const result = await response.json()
+            const result = await response.json();
+            console.log("API response:", result);
 
             if (result.status) {
+                console.log("File metadata saved successfully, navigating to /view-docs");
                 router.push("/view-docs");
             } else {
-                throw new Error('Failed to add document');
+                throw new Error("Failed to add document");
             }
         } catch (error) {
-            console.error("Error in file upload:", error.message || error);
-            if (error.stack) {
-                console.error("Stack trace:", error.stack);
-            }
+            console.error("Error in file upload:", error);
         } finally {
             setIsLoader(false);
+            console.log("Loader set to false");
         }
     };
 
     const triggerFileInput = () => {
         if (inputRef.current) {
             inputRef.current.click();
+            console.log("File input triggered");
         }
     };
 
