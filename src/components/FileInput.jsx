@@ -88,7 +88,7 @@ const FileInput = ({
             console.log("Encrypted file name:", file_name);
 
             const request = {
-                file_name,
+                file_name: file_name,
                 file_type: selectedFile.type,
                 file_link: url.split("?")[0], // Get the public link without query params
                 user_id: userStore?.id, // Ensure userStore and id are valid
