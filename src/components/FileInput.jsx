@@ -84,7 +84,13 @@ const FileInput = ({
                 created_at: Date.now(),
             };
 
-            const result = await addDocument(request);
+             const response = await fetch("/api/post/upload-doc", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(request),  
+            });
+
+            const result = await response.json()
 
             if (result.status) {
                 router.push("/view-docs");
