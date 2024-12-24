@@ -6,19 +6,29 @@ const generateFileName = (bytes = 32) => {
     return crypto.randomBytes(bytes).toString("hex");
 };
 
+import crypto from "crypto";
+
 export const encryptFileName = (fileName) => {
-    const iv = crypto.randomBytes(16);  
-    const cipher = crypto.createCipheriv(
-        "aes-256-cbc",
-        process.env.NEXT_PUBLIC_ENCRYPTION_KEY,  
-        iv
-    );
+    // Ensure the encryption key is exactly 32 bytes (256 bits)
+    const key = Buffer.from(process.env.NEXT_PUBLIC_ENCRYPTION_KEY, "hex");
+    if (key.length !== 32) {
+        throw new Error("Encryption key must be exactly 32 bytes long.");
+    }
 
-    let encrypted = cipher.update(fileName, "utf8", "hex");  
-    encrypted += cipher.final("hex");  
+    // Generate a 16-byte initialization vector (IV)
+    const iv = crypto.randomBytes(16);
 
+    // Create a Cipher instance using AES-256-CBC
+    const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+
+    // Encrypt the fileName
+    let encrypted = cipher.update(fileName, "utf8", "hex");
+    encrypted += cipher.final("hex");
+
+    // Combine the IV and encrypted data as the result
     return `${iv.toString("hex")}:${encrypted}`;
 };
+
 
 const s3 = new S3Client({
     region: process.env.NEXT_PUBLIC_AWS_BUCKET_REGION,
