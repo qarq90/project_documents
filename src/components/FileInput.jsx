@@ -6,7 +6,7 @@ import { uploadFileToS3 } from "@/helpers/addHelpers";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUIStore } from "@/stores/UIStore";
 import { useRouter } from "next/navigation";
-import {encryptFileName} from "@/lib/crypto"
+import CryptoJS from "crypto-js";
 
 const FileInput = ({
     id = "file-input",
@@ -27,17 +27,14 @@ const FileInput = ({
         try {
             const file = e.target.files?.[0] || null;
             setSelectedFile(file);
-            console.log("File selected:", file);
 
             if (fileUrl) {
                 URL.revokeObjectURL(fileUrl);
-                console.log("Previous file URL revoked");
             }
 
             if (file) {
                 const url = URL.createObjectURL(file);
                 setFileUrl(url);
-                console.log("Generated file preview URL:", url);
             }
         } catch (error) {
             console.error("Error in handleFileChange:", error);
@@ -81,7 +78,7 @@ const FileInput = ({
             if (!fileName) {
                 throw new Error("File name is undefined or empty");
             }
-            const encryptedFileName = encryptFileName(selectedFile.name,process.env.NEXT_PUBLIC_ENCRYPTION_KEY);
+            const encryptedFileName = CryptoJS.AES.encrypt(fileName,process.env.NEXT_PUBLIC_ENCRYPTION_KEY).toString();
 
             const request = {
                 file_name: encryptedFileName,
@@ -91,6 +88,7 @@ const FileInput = ({
                 created_at: Date.now(),
             };
 
+            console.log("Request sent:", request);
 
             const response = await fetch("/api/post/upload-doc", {
                 method: "POST",

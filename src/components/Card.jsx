@@ -1,7 +1,7 @@
 import { FaTrashCan } from "react-icons/fa6";
 import { deleteDoc } from "@/helpers/deleteHelpers";
 import { useUIStore } from "@/stores/UIStore";
-import {decryptFileName} from "@/lib/crypto"
+import CryptoJS from "crypto-js";
 
 export const Card = ({
   index,
@@ -31,6 +31,8 @@ export const Card = ({
     setIsLoader(false);
   };
 
+  const bytes = CryptoJS.AES.decrypt(file_name, process.env.NEXT_PUBLIC_ENCRYPTION_KEY);
+  const decryptedFileName = bytes.toString(CryptoJS.enc.Utf8);
 
   return (
     <div
@@ -45,7 +47,7 @@ export const Card = ({
       >
         <div className="flex-1">
           <strong>Name:</strong>
-          <br />{decryptFileName(file_name,process.env.NEXT_PUBLIC_ENCRYPTION_KEY)}
+          <br />{decryptedFileName}
         </div>
         <div className="flex-1">
           <strong>Type:</strong> {file_type}
