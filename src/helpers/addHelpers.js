@@ -58,7 +58,5 @@ export const addDocument = async (request) => {
         body: JSON.stringify(request),  
     });
 
-    console.log(request)
-
     return await response.json();
 };

@@ -88,8 +88,6 @@ const FileInput = ({
                 created_at: Date.now(),
             };
 
-            console.log("Request sent:", request);
-
             const response = await fetch("/api/post/upload-doc", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -107,14 +105,12 @@ const FileInput = ({
             console.error("Error in file upload:", error);
         } finally {
             setIsLoader(false);
-            console.log("Loader set to false");
         }
     };
 
     const triggerFileInput = () => {
         if (inputRef.current) {
             inputRef.current.click();
-            console.log("File input triggered");
         }
     };
 
