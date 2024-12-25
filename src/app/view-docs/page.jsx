@@ -115,12 +115,13 @@ function GridView(documents, setDocuments) {
     return (
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {documents.map((doc, index) => (
-                <div key={doc._id} className="flex flex-col">
+                <div key={doc._id} className="flex flex-col h-full">
                     <Card
                         {...doc}
                         index={index}
                         documents={documents}
                         setDocuments={setDocuments}
+                        className="h-full flex flex-col"
                     />
                 </div>
             ))}

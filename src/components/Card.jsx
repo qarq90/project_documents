@@ -15,7 +15,6 @@ export const Card = ({
 }) => {
   const { setIsLoader } = useUIStore();
 
-
   const deleteHandler = async (event) => {
     setIsLoader(true);
     event.preventDefault();
@@ -31,13 +30,16 @@ export const Card = ({
     setIsLoader(false);
   };
 
-  const bytes = CryptoJS.AES.decrypt(file_name, process.env.NEXT_PUBLIC_ENCRYPTION_KEY);
+  const bytes = CryptoJS.AES.decrypt(
+    file_name,
+    process.env.NEXT_PUBLIC_ENCRYPTION_KEY
+  );
   const decryptedFileName = bytes.toString(CryptoJS.enc.Utf8);
 
   return (
     <div
       key={index}
-      className="group relative flex flex-col items-start gap-4 rounded-md bg-[var(--secondary-black)] p-4 transition-all hover:brightness-125"
+      className="group relative flex h-full flex-col justify-between rounded-md bg-[var(--secondary-black)] p-4 shadow-md transition-all hover:brightness-125"
     >
       <a
         href={file_link}
@@ -47,7 +49,8 @@ export const Card = ({
       >
         <div className="flex-1">
           <strong>Name:</strong>
-          <br />{decryptedFileName}
+          <br />
+          {decryptedFileName}
         </div>
         <div className="flex-1">
           <strong>Type:</strong> {file_type}
@@ -59,7 +62,7 @@ export const Card = ({
       </a>
       <button
         onClick={deleteHandler}
-        className="absolute bottom-4 right-4 rounded-md bg-red-500 p-2 text-white hover:bg-red-600 focus:outline-none group-hover:opacity-100 md:bottom-2 md:right-2 md:opacity-0 md:hover:opacity-100"
+        className="absolute bottom-4 right-4 rounded-md bg-red-500 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:outline-none hover:bg-red-600"
       >
         <FaTrashCan />
       </button>
