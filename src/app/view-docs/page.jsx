@@ -43,7 +43,7 @@ export default function View() {
             </AuthWrapper>
         );
 
-    if (isLoading)
+    if (isLoading && userStore !== null)
     return (
         <AuthWrapper>
             <Generic />
