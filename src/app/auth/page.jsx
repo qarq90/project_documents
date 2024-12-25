@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Title from "@/components/ui/Title";
 import { AuthWrapper } from "@/components/Wrapper";
@@ -7,13 +8,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/AuthStore";
 import { getProviders, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import { Generic } from "@/components/loaders/Generic";
 
 export default function Auth() {
     const router = useRouter();
     const { isAuthenticated, user } = useAuth();
     const { providers, setProviders } = useAuthStore();
+
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         if (isAuthenticated && user) {
@@ -28,9 +31,18 @@ export default function Auth() {
         };
 
         if (!providers) {
+            setIsLoading(true)
             fetchProviders();
+            setIsLoading(false)
         }
     }, [providers, setProviders]);
+
+    if (isLoading)
+    return (
+        <AuthWrapper>
+            <Generic />
+        </AuthWrapper>
+    );
 
     return (
         <AuthWrapper>

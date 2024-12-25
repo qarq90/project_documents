@@ -12,10 +12,12 @@ import { FaTh } from "react-icons/fa";
 import clsx from "clsx";
 import { Row } from "@/components/Row";
 import { Card } from "@/components/Card";
+import { Generic } from "@/components/loaders/Generic";
 
 export default function View() {
     const [documents, setDocuments] = useState([]);
     const [viewType, setViewType] = useState(false);
+    const [isLoading, setIsLoading] = useState(true)
     const { userStore } = useAuthStore();
     const hasFetched = useRef(false);
 
@@ -28,7 +30,9 @@ export default function View() {
 
     useEffect(() => {
         if (userStore) {
+            setIsLoading(true);
             getDocuments();
+            setIsLoading(false);
         }
     }, [userStore]);
 
@@ -39,12 +43,19 @@ export default function View() {
             </AuthWrapper>
         );
 
-    if (documents.length === 0)
-        return (
-            <AuthWrapper>
-                <NoDocuments />
-            </AuthWrapper>
-        );
+    if (isLoading)
+    return (
+        <AuthWrapper>
+            <Generic />
+        </AuthWrapper>
+    );
+
+    if (documents.length === 0 && !isLoading) 
+    return (
+        <AuthWrapper>
+            <NoDocuments />
+        </AuthWrapper>
+    );
 
     return (
         <>

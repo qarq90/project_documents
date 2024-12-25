@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { Sidebar } from "@/components/Sidebar";
 import { AppWrapper } from "@/components/Wrapper";
 import { useUIStore } from "@/stores/UIStore";
-import { Loader } from "@/components/Loader";
+import { Astronaut } from "@/components/loaders/Astronaut";
 
 export default function RootLayout({ children }) {
       const { isLoader } = useUIStore();
@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
                         <Sidebar />
                         {children}
                     </AppWrapper>
-                    {isLoader && <Loader />}
+                    {isLoader && <Astronaut />}
                 </SessionProvider>
             </body>
         </html>

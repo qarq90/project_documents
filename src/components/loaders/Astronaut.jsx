@@ -1,4 +1,4 @@
-export const Loader = () => {
+export const Astronaut = () => {
     return (
         <>
             <div className="absolute left-0 top-0 z-40 h-screen w-screen backdrop-blur-md"></div>
