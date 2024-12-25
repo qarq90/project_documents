@@ -24,19 +24,19 @@ export default function View() {
     const getDocuments = async () => {
         if (hasFetched.current) return;
         hasFetched.current = true;
-        const {result} = await fetchDocuments(userStore.id);
+        const { result } = await fetchDocuments(userStore.id);
         setDocuments(Array.isArray(result) ? result : []);
+        setIsLoading(false);
     };
 
     useEffect(() => {
         if (userStore) {
             setIsLoading(true);
             getDocuments();
-            setIsLoading(false);
         }
     }, [userStore]);
 
-    if (!userStore)
+    if (userStore === null)
         return (
             <AuthWrapper>
                 <AccountRequired />
