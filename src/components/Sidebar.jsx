@@ -42,7 +42,7 @@ export const Sidebar = () => {
             </button>
 
             <div
-                className={`fixed left-0 top-0 z-40 flex h-screen w-4/5 max-w-xs transform flex-col justify-between bg-[var(--secondary-black)] p-3 pt-16 shadow-lg transition-transform duration-300 ease-in-out md:fixed md:w-1/6 md:translate-x-0 md:pt-0 md:pt-2 ${
+                className={`fixed left-0 top-0 z-40 flex h-full w-4/5 max-w-xs transform flex-col justify-between bg-[var(--secondary-black)] p-3 pt-16 shadow-lg transition-transform duration-300 ease-in-out md:fixed md:w-1/6 md:translate-x-0 md:pt-0 md:pt-2 ${
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
